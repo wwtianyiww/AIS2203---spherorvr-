@@ -8,33 +8,42 @@ from qwiicMUX import devices
 import qwiic_titan_gps
 import sys
 
+class GPS:
+    def __init__(self):
+        self.gps = None
+        self.initialized = False
 
-def run_example():
-    gps = qwiic_titan_gps.QwiicTitanGps()
-
-    if gps.connected is False:
-        print("Could not connect to to the SparkFun GPS Unit. Double check that\
-              it's wired correctly.", file=sys.stderr)
-        return
-
-    gps.begin()
-
-    while True:
+    def initialize(self) -> bool:
+        """Initialize GPS"""
         try:
-            if gps.get_nmea_data() is True:
-                print("Latitude: {}, Longitude: {}, Time: {}".format(
-                    gps.gnss_messages['Latitude'],
-                    gps.gnss_messages['Longitude'],
-                    gps.gnss_messages['Time'])) # Time will be UTC time as a list [hh, mm, ss]
+            self.gps = qwiic_titan_gps.QwiicTitanGps()
+            if self.gps.connected:
+                self.gps.begin()
+                self.initialized = True
+                return True
+            return False
         except:
-            print("Error while retrieving GPS Values!")
+            return False
 
-        sleep(1)
+    def read(self) -> dict:
+        """
+        Read GPS data
 
+        Returns:
+            Dict with lat/lon/time, or empty dict if no data
+        """
+        if not self.initialized:
+            return {}
 
-if __name__ == '__main__':
-    try:
-        run_example()
-    except (KeyboardInterrupt, SystemExit) as exErr:
-        print("Ending Basic Example.")
-        sys.exit(0)
+        try:
+            if self.gps.get_nmea_data():
+                return {
+                    'lat': self.gps.gnss_messages.get('Latitude'),
+                    'lon': self.gps.gnss_messages.get('Longitude'),
+                    'time': self.gps.gnss_messages.get('Time')
+                }
+        except:
+            pass
+
+        return {}
+
