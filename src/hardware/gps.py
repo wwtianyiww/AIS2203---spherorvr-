@@ -9,7 +9,6 @@ import sys
 
 
 def run_example():
-
     qwiicGPS = qwiic_titan_gps.QwiicTitanGps()
 
     if qwiicGPS.connected is False:
