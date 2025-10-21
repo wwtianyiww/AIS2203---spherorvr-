@@ -23,32 +23,18 @@ def runExample():
 
     while True:
         # By enabling channels 0 and 1, our Master device can speak to a device connected to port 0 or 1of the MUX
-        print("Enabling channels 0 and 1")
+        print("Enabling channels")
         myTca.disable_all()
-        myTca.enable_channels([0, 1])
+        myTca.enable_all()
+        #myTca.enable_channels([0, 1])  --- # change based on number of connections after scan
         myTca.list_channels()
 
         # Find any i2c devices connected to the master, we should see the addresses of any devices we have connected to port 0 or 1 here,
         # but not any devices connected to other ports.
-        print("Checking for i2c devices on ports 0 and 1")
+        print("Checking for i2c devices on all ports")
         devices = i2c.scan()
         print("Devices found: ", devices)
         time.sleep(2)
-
-        # Enable channels 2 and 3, our Master device can now speak to a device connected to port 2 or 3 of the MUX
-        print("Enabling channels 2 and 3")
-        myTca.disable_all()
-        myTca.enable_channels([2, 3])
-        myTca.list_channels()
-
-        # Find any i2c devices connected to the master, we should see the addresses of any devices we have connected to port 2 or 3 here,
-        # but not any devices connected to other ports.
-        print("Checking for i2c devices on ports 2 and 3")
-        devices = i2c.scan()
-        print("Devices found: ", devices)
-        time.sleep(2)
-
-
 if __name__ == '__main__':
     try:
         runExample()
